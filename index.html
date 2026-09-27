@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cute Study With Me — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF8F0; --lavender:#E9E2F7; --mint:#BFEBD9; --coral:#FF9E9E;
+    --text:#5B4B63; --text-soft:#8E7E96; --card:#FFFFFF; --shadow:rgba(120,100,140,.15);
+    --wall:#F3E7DE; --wall2:#EAD9CC; --floor:#D9B78C; --floor2:#C79F6E;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --cream:#2B2433; --lavender:#3A3145; --mint:#2E4A40; --coral:#7A3E45; --text:#F2E9F7; --text-soft:#B7A6C2; --card:#352C40; --shadow:rgba(0,0,0,.3); --wall:#3E3448; --wall2:#332B3D; --floor:#4A3626; --floor2:#3C2B1C; }
+  }
+  :root[data-theme="dark"]{ --cream:#2B2433; --lavender:#3A3145; --mint:#2E4A40; --coral:#7A3E45; --text:#F2E9F7; --text-soft:#B7A6C2; --card:#352C40; --shadow:rgba(0,0,0,.3); --wall:#3E3448; --wall2:#332B3D; --floor:#4A3626; --floor2:#3C2B1C; }
+  html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
+  * { font-family:'Quicksand',sans-serif; box-sizing:border-box; }
+  body{ margin:0; min-height:100%; background:var(--cream); color:var(--text); display:flex; justify-content:center; padding:20px 14px 40px; }
+  .app{ width:100%; max-width:460px; }
+  h1{ font-size:22px; font-weight:700; text-align:center; margin:6px 0 2px; }
+  .sub{ text-align:center; color:var(--text-soft); font-size:13px; margin-bottom:18px; }
+
+  .card{ background:var(--card); border-radius:26px; padding:20px; margin-bottom:16px; box-shadow:0 8px 24px var(--shadow); }
+
+  /* Room scene */
+  .roomscene{ position:relative; height:230px; border-radius:20px; overflow:hidden; background:linear-gradient(var(--wall),var(--wall) 62%, var(--floor) 62%, var(--floor2)); }
+  .window{ position:absolute; top:14px; left:calc(50% - 32px); width:64px; height:52px; background:#CFE8F0; border:5px solid #fff; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,.1); }
+  .window:before, .window:after{ content:""; position:absolute; background:#fff; }
+  .window:before{ left:50%; top:0; width:5px; height:100%; transform:translateX(-50%); }
+  .window:after{ top:50%; left:0; height:5px; width:100%; transform:translateY(-50%); }
+  .rug{ position:absolute; left:50%; bottom:16px; transform:translateX(-50%); width:170px; height:34px; background:var(--coral); opacity:.55; border-radius:50%; }
+  .desk{ position:absolute; right:14px; bottom:34px; width:70px; height:38px; background:#B98A5E; border-radius:6px 6px 2px 2px; }
+  .desk:before{ content:""; position:absolute; top:-16px; right:8px; width:10px; height:18px; background:#F4CF6B; border-radius:3px 3px 0 0; }
+  .shelf{ position:absolute; left:10px; top:76px; width:52px; height:10px; background:#B98A5E; border-radius:3px; opacity:0; transition:opacity .4s; }
+  .shelf.on{ opacity:1; }
+  .tv{ position:absolute; left:16px; top:18px; width:54px; height:36px; background:#3A3242; border-radius:5px; padding:3px; z-index:1; }
+  .tv-screen{ width:100%; height:100%; border-radius:2px; background:#BFE3FF; }
+  .roomscene:not(.studying) .tv-screen{ animation:flicker 2.6s infinite; }
+  @keyframes flicker{ 0%,100%{opacity:1;} 45%{opacity:.7;} 55%{opacity:1;} 80%{opacity:.85;} }
+  .tv-stand{ position:absolute; left:26px; top:54px; width:32px; height:5px; background:#2B2433; border-radius:2px; }
+  .couch{ position:absolute; left:8px; bottom:20px; width:64px; height:26px; background:#D8A48F; border-radius:12px 12px 4px 4px; }
+  .couch:before{ content:""; position:absolute; left:0; top:-10px; width:100%; height:12px; background:#D8A48F; border-radius:8px 8px 0 0; }
+  .book-prop{ position:absolute; left:58%; bottom:56px; font-size:19px; opacity:0; transform:translateY(4px); transition:opacity .4s ease .5s, transform .4s ease .5s; z-index:3; }
+  .roomscene.studying .book-prop{ opacity:1; transform:translateY(0); }
+  .bunny-wrap{ position:absolute; left:8%; bottom:22px; width:92px; z-index:2; transition:left 1.1s ease, bottom 1.1s ease; }
+  .roomscene.studying .bunny-wrap{ left:56%; bottom:34px; }
+  .bunny{ width:100%; transform-origin:center bottom; animation:breathe 2.6s ease-in-out infinite; }
+  @keyframes breathe{ 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-3px) scale(1.02);} }
+  .bunny.studying{ animation:breathe 1.4s ease-in-out infinite; }
+  .eye{ animation:blink 4.5s infinite; transform-origin:center; }
+  @keyframes blink{ 0%,94%,100%{transform:scaleY(1);} 96%{transform:scaleY(0.1);} }
+  .speech{ position:absolute; top:6px; right:10px; background:var(--lavender); color:var(--text); padding:8px 12px; border-radius:14px 14px 4px 14px; font-size:12.5px; font-weight:600; max-width:170px; opacity:0; transition:opacity .3s; z-index:3; }
+  .speech.show{ opacity:1; }
+  .roomitem{ position:absolute; font-size:26px; opacity:0; transform:scale(0); transition:all .4s ease; z-index:2; }
+  .roomitem.on{ opacity:1; transform:scale(1); }
+  #ri0{ left:14px; bottom:20px; }
+  #ri1{ right:24px; bottom:66px; font-size:18px; }
+  #ri2{ left:calc(50% + 40px); bottom:22px; }
+  #ri3{ left:12px; top:70px; }
+  #ri4{ left:20px; top:6px; font-size:16px; }
+  #ri5{ right:10px; top:8px; }
+
+  .row{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
+  select, .dur-btn, .primary-btn{ font-family:inherit; border:none; border-radius:14px; padding:10px 16px; font-weight:700; font-size:14px; cursor:pointer; }
+  select{ background:var(--lavender); color:var(--text); }
+  .dur-btn{ background:var(--lavender); color:var(--text); }
+  .dur-btn.active{ background:var(--coral); color:#fff; }
+  .primary-btn{ background:var(--coral); color:#fff; width:100%; margin-top:14px; padding:13px; font-size:15px; }
+  .primary-btn:disabled{ opacity:.5; }
+
+  .timer{ text-align:center; font-size:38px; font-weight:700; margin-top:10px; letter-spacing:1px; }
+  .demo-toggle{ display:flex; align-items:center; justify-content:center; gap:8px; font-size:12px; color:var(--text-soft); margin-top:8px; }
+  .demo-toggle input{ transform:scale(1.1); }
+
+  .energy-label{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px; }
+  .bar{ height:12px; background:var(--lavender); border-radius:8px; overflow:hidden; }
+  .bar-fill{ height:100%; background:linear-gradient(90deg,var(--coral),var(--mint)); transition:width .5s ease; }
+  .milestones{ display:flex; justify-content:space-between; margin-top:8px; font-size:16px; }
+  .milestones span{ opacity:.35; }
+  .milestones span.reached{ opacity:1; }
+
+  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; align-items:center; justify-content:center; padding:20px; z-index:10; }
+  .overlay.show{ display:flex; }
+  .modal{ background:var(--card); border-radius:22px; padding:22px; max-width:360px; width:100%; }
+  .modal h3{ margin:0 0 10px; font-size:17px; }
+  .modal textarea{ width:100%; min-height:70px; border-radius:12px; border:1.5px solid var(--lavender); padding:10px; font-family:inherit; font-size:14px; resize:none; background:transparent; color:var(--text); }
+  .modal .primary-btn{ margin-top:12px; }
+
+  .unlock-toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px); background:var(--coral); color:#fff; padding:12px 18px; border-radius:16px; font-weight:700; font-size:13.5px; opacity:0; transition:all .35s ease; z-index:20; text-align:center; }
+  .unlock-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  h2.section{ font-size:14px; font-weight:700; margin:0 0 10px; color:var(--text-soft); }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Cute Study With Me</h1>
+  <div class="sub">Study with Mochi. Watch your little world grow.</div>
+
+  <div class="card">
+    <h2 class="section">Mochi's room</h2>
+    <div class="roomscene" id="roomscene">
+      <div class="window"></div>
+      <div class="tv"><div class="tv-screen"></div></div>
+      <div class="tv-stand"></div>
+      <div class="shelf" id="shelf"></div>
+      <div class="desk"></div>
+      <div class="couch"></div>
+      <div class="rug"></div>
+      <span class="book-prop">📖</span>
+      <div class="speech" id="speech"></div>
+      <span class="roomitem" id="ri0">🌱</span>
+      <span class="roomitem" id="ri1">🖼️</span>
+      <span class="roomitem" id="ri2">🐹</span>
+      <span class="roomitem" id="ri3">📖</span>
+      <span class="roomitem" id="ri4">🌷</span>
+      <span class="roomitem" id="ri5">🚪</span>
+      <div class="bunny-wrap">
+        <svg class="bunny" id="bunnySvg" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="42" cy="28" rx="9" ry="22" fill="#FFF3F3" stroke="#5B4B63" stroke-width="2.5"/>
+          <ellipse cx="78" cy="28" rx="9" ry="22" fill="#FFF3F3" stroke="#5B4B63" stroke-width="2.5"/>
+          <ellipse cx="42" cy="30" rx="4" ry="13" fill="#FFC9D6"/>
+          <ellipse cx="78" cy="30" rx="4" ry="13" fill="#FFC9D6"/>
+          <ellipse cx="60" cy="75" rx="40" ry="38" fill="#FFFFFF" stroke="#5B4B63" stroke-width="2.5"/>
+          <ellipse class="eye" cx="48" cy="72" rx="4" ry="5.5" fill="#5B4B63"/>
+          <ellipse class="eye" cx="72" cy="72" rx="4" ry="5.5" fill="#5B4B63"/>
+          <ellipse cx="60" cy="82" rx="4" ry="3" fill="#FFC9D6"/>
+          <path d="M55 88 Q60 92 65 88" stroke="#5B4B63" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="34" cy="82" rx="5" ry="3.5" fill="#FFC9D6" opacity=".8"/>
+          <ellipse cx="86" cy="82" rx="5" ry="3.5" fill="#FFC9D6" opacity=".8"/>
+          <rect x="30" y="98" width="60" height="14" rx="6" fill="#BFEBD9" stroke="#5B4B63" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <select id="subject">
+        <option>DSA</option><option>Java</option><option>Computer Networks</option>
+        <option>Operating Systems</option><option>Custom Subject</option>
+      </select>
+    </div>
+    <div class="row" id="durRow">
+      <button class="dur-btn active" type="button" data-min="25">25 min</button>
+      <button class="dur-btn" type="button" data-min="50">50 min</button>
+      <button class="dur-btn" type="button" data-min="1">1 min (custom demo)</button>
+    </div>
+    <div class="timer" id="timerDisplay">25:00</div>
+    <button class="primary-btn" type="button" id="startBtn">Start focus session</button>
+    <div class="demo-toggle"><input type="checkbox" id="fastMode" checked><label for="fastMode">Demo speed (session finishes in a few seconds)</label></div>
+  </div>
+
+  <div class="card">
+    <div class="energy-label"><span>Focus Energy</span><span id="energyTxt">0 / 50 hrs</span></div>
+    <div class="bar"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+    <div class="milestones">
+      <span id="m0">30m</span><span id="m1">2h</span><span id="m2">5h</span><span id="m3">10h</span><span id="m4">20h</span><span id="m5">50h</span>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3>What did you learn?</h3>
+    <div style="font-size:13px;color:var(--text-soft);margin-bottom:8px;" id="askAbout">Tell Mochi one thing about today's topic.</div>
+    <textarea id="reflection" placeholder="e.g. Binary trees can be traversed in-order, pre-order, or post-order..."></textarea>
+    <button class="primary-btn" type="button" id="submitReflection">Save and earn Focus Energy</button>
+  </div>
+</div>
+<div class="unlock-toast" id="toast"></div>
+
+<script>
+(function(){
+  const TOTAL_GOAL_MIN = 50*60;
+  const milestones = [30, 120, 300, 600, 1200, 3000];
+  const milestoneNames = ["Tiny Plant","Room Decoration","Pet Friend","Library","Garden","New Area"];
+
+  let state = { totalMinutes: 0, unlocked: [] };
+  try{
+    const saved = JSON.parse(localStorage.getItem('csw_state') || 'null');
+    if(saved && typeof saved.totalMinutes === 'number'){ state = saved; }
+  }catch(e){}
+
+  let selectedMin = 25;
+  let remainingSec = selectedMin*60;
+  let running = false;
+  let timerInt = null;
+
+  const timerDisplay = document.getElementById('timerDisplay');
+  const startBtn = document.getElementById('startBtn');
+  const bunny = document.getElementById('bunnySvg');
+  const speech = document.getElementById('speech');
+  const fastMode = document.getElementById('fastMode');
+  const subjectSel = document.getElementById('subject');
+  const roomscene = document.getElementById('roomscene');
+
+  function fmt(s){
+    s = Math.max(0, s);
+    const m = Math.floor(s/60), sec = s%60;
+    return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+  }
+  function say(text, ms){
+    speech.textContent = text;
+    speech.classList.add('show');
+    if(ms) setTimeout(function(){ speech.classList.remove('show'); }, ms);
+  }
+
+  document.querySelectorAll('.dur-btn').forEach(function(b){
+    b.addEventListener('click', function(){
+      if(running) return;
+      document.querySelectorAll('.dur-btn').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      selectedMin = parseFloat(b.dataset.min);
+      remainingSec = selectedMin*60;
+      timerDisplay.textContent = fmt(remainingSec);
+    });
+  });
+
+  function renderProgress(){
+    const pct = Math.min(100, (state.totalMinutes/TOTAL_GOAL_MIN)*100);
+    document.getElementById('barFill').style.width = pct + '%';
+    const hrs = (state.totalMinutes/60).toFixed(1);
+    document.getElementById('energyTxt').textContent = hrs + ' / 50 hrs';
+    milestones.forEach(function(m, i){
+      const el = document.getElementById('m'+i);
+      if(state.totalMinutes >= m) el.classList.add('reached'); else el.classList.remove('reached');
+    });
+    state.unlocked.forEach(function(i){
+      const el = document.getElementById('ri'+i);
+      if(el) el.classList.add('on');
+    });
+    if(state.unlocked.indexOf(3) !== -1){ document.getElementById('shelf').classList.add('on'); }
+  }
+  renderProgress();
+
+  function persist(){ try{ localStorage.setItem('csw_state', JSON.stringify(state)); }catch(e){} }
+
+  function checkUnlocks(){
+    milestones.forEach(function(m, i){
+      if(state.totalMinutes >= m && state.unlocked.indexOf(i) === -1){
+        state.unlocked.push(i);
+        showToast('Unlocked: ' + milestoneNames[i]);
+      }
+    });
+  }
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+
+  startBtn.addEventListener('click', function(){
+    if(running) return;
+    running = true;
+    startBtn.disabled = true;
+    startBtn.textContent = 'Mochi is walking to the desk...';
+    roomscene.classList.add('studying');
+    say('Okay! Coming to study.', 1400);
+
+    setTimeout(function(){
+      bunny.classList.add('studying');
+      startBtn.textContent = 'Studying with Mochi...';
+      say('Let us focus together!', 1800);
+    }, 1100);
+
+    if(fastMode.checked){
+      timerInt = setInterval(function(){
+        remainingSec -= 15;
+        timerDisplay.textContent = fmt(remainingSec);
+        if(remainingSec <= 0){ clearInterval(timerInt); finishSession(); }
+      }, 250);
+    } else {
+      timerInt = setInterval(function(){
+        remainingSec -= 1;
+        timerDisplay.textContent = fmt(remainingSec);
+        if(remainingSec <= 0){ clearInterval(timerInt); finishSession(); }
+      }, 1000);
+    }
+  });
+
+  function finishSession(){
+    bunny.classList.remove('studying');
+    say('Session done! Great focus.', 2500);
+    document.getElementById('askAbout').textContent = 'What did you learn about ' + subjectSel.value + '?';
+    document.getElementById('reflection').value = '';
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  document.getElementById('submitReflection').addEventListener('click', function(){
+    document.getElementById('overlay').classList.remove('show');
+    state.totalMinutes += selectedMin;
+    checkUnlocks();
+    persist();
+    renderProgress();
+    running = false;
+    startBtn.disabled = false;
+    startBtn.textContent = 'Start focus session';
+    remainingSec = selectedMin*60;
+    timerDisplay.textContent = fmt(remainingSec);
+    roomscene.classList.remove('studying');
+    say('Thanks for sharing! Back to TV time.', 3000);
+  });
+})();
+</script>
+</body>
+</html>
